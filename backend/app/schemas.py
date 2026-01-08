@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, List, Union
 from datetime import datetime
 
 class ResearchBase(BaseModel):
@@ -13,8 +13,8 @@ class ResearchResponse(ResearchBase):
     status: str
     created_at: datetime
 
-    research_data: Optional[Dict[str, Any]] = None  # Research Agent
-    analysis_data: Optional[Dict[str, Any]] = None  # Data Agent
+    research_data: Optional[Union[Dict[str, Any], List[Any]]] = None  # Research Agent
+    analysis_data: Optional[Union[Dict[str, Any], str]] = None  # Data Agent
     code_outputs: Optional[Dict[str, Any]] = None   # Code Agent
     final_report: Optional[str] = None              # Writer Agent
     

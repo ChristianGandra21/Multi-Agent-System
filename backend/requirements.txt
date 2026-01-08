@@ -13,15 +13,16 @@ celery==5.3.4
 redis==5.0.1
 
 # LangChain + LangGraph
-langchain==0.3.0
-langchain-core==0.3.0
-langchain-groq==0.2.0
-langchain-community==0.3.0
-langgraph==0.2.0
+langchain==0.3.15
+langchain-core==0.3.28
+langchain-community==0.3.15
+langchain-experimental==0.3.3
+langgraph==0.2.55
+groq==0.37.1
+langchain-groq==0.2.1
 
 # Tools
 tavily-python==0.5.0
-groq==0.9.0
 
 # Utils
 loguru==0.7.2

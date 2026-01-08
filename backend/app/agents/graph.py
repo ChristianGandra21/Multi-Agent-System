@@ -51,6 +51,9 @@ def run_graph(query: str) -> dict:
             "query": query,
             "research_results": final_state.get("research_results", []),
             "research_summary": final_state.get("research_summary", ""),
+            "extracted_data": final_state.get("extracted_data", {}),
+            "data_analysis": final_state.get("data_analysis", ""),
+            "code_outputs": final_state.get("code_outputs", {}),
             "final_report": final_state.get("final_report", ""),
             "errors": final_state.get("erros", [])
         }

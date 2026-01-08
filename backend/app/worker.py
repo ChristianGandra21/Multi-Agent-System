@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from app.celery_app import celery_app
 from app.agents.graph import run_graph
 from app.database import SessionLocal
@@ -18,8 +19,10 @@ def execute_research_flow(research_id: int, query: str):
         if result["success"]:
             research.status = "completed"
             research.research_data = result.get("research_results")
-            research.analysis_data = result.get("data_analysis")
+            research.analysis_data = result.get("extracted_data")
+            research.code_outputs = result.get("code_outputs")
             research.final_report = result.get("final_report")
+            research.completed_at = datetime.utcnow()
         else:
             research.status = "failed"
             research.error_message = str(result.get("error"))
