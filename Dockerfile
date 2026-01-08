@@ -1,18 +1,21 @@
 FROM python:3.11-slim
 
-# Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
+    gcc \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia os arquivos de requisitos para o contêiner
-COPY backend/requirements.txt .
-
-# Instala as dependências do Python
+# Copy requirements and install Python dependencies
+COPY ./requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia todo o código da aplicação para o contêiner
-COPY backend/ .
+# Copy application code
+COPY ./backend/ .
+# Expose port
+EXPOSE 8000
+
+# Default command (can be overridden in docker-compose)
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
