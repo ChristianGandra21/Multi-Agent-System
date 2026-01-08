@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { SearchBar } from "./components/SearchBar";
 import { AgentStatus } from "./components/AgentStatus";
 import { researchService } from "./services/api";
+import { ReportView } from "./components/ReportView";
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -45,9 +46,21 @@ function App() {
             </div>
             <div className="md:col-span-3 bg-slate-800/40 border border-slate-700 rounded-2xl p-6">
               {data.status === "completed" ? (
-                <pre className="whitespace-pre-wrap font-sans">
-                  {data.final_report}
-                </pre>
+                <div className="space-y-6">
+                  <ReportView report={data.final_report} />
+                  
+                  {/* Exibir gráfico se disponível */}
+                  {data.code_outputs?.chart_base64 && (
+                    <div className="mt-6 border-t border-slate-700 pt-6">
+                      <h3 className="text-lg font-semibold mb-4 text-slate-300">📊 Visualização de Dados</h3>
+                      <img 
+                        src={`data:image/png;base64,${data.code_outputs.chart_base64}`}
+                        alt="Gráfico gerado pela IA"
+                        className="max-w-full h-auto rounded-lg border border-slate-600"
+                      />
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div className="h-64 flex items-center justify-center text-slate-500 italic">
                   Processando inteligência...
