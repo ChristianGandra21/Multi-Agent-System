@@ -1,15 +1,8 @@
 import os
-from celery import Celery
-
-from app.agents.graph import run_graph
+from app.celery_app import celery_app
+from app.agents.graph import run_research
 from app.database import SessionLocal
 from app.models import Research
-
-celery_app = Celery(
-    "research_tasks", 
-    broker="redis://localhost:6379/0",
-    backend="redis://localhost:6379/0"
-)
 
 @celery_app.task(name="execute_research_flow")
 def execute_research_flow(research_id: int, query: str):
@@ -20,7 +13,7 @@ def execute_research_flow(research_id: int, query: str):
         research.status = "in_progress"
         db.commit()
 
-        result = run_graph(query)
+        result = run_research(query)
 
         if result["success"]:
             research.status = "completed"
@@ -33,11 +26,11 @@ def execute_research_flow(research_id: int, query: str):
 
         db.commit()
     except Exception as e:
-        db.rollback
-        db.query(Research).filter(Research.id == research_id).update({
-            "status": "failed", 
-            "error_message": str(e)
-        })
-        db.commit()
+        db.rollback()
+        research = db.query(Research).filter(Research.id == research_id).first()
+        if research:
+            research.status = "failed"
+            research.error_message = str(e)
+            db.commit()
     finally:
         db.close()

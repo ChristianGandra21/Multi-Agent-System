@@ -30,12 +30,8 @@ def create_research(research: ResearchCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_research)
 
+    # Executar pesquisa de forma assíncrona
     execute_research_flow.delay(new_research.id, new_research.query)
-    
-    return new_research
-
-# Rota para obter tarefas por id
-@app.get("/research/{research_id}", response_model=ResearchResponse)
 def get_research(research_id: int, db: Session = Depends(get_db)):
     research = db.query(Research).filter(Research.id == research_id).first()
     if not research:

@@ -11,7 +11,11 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./research.db")
 
 # Cria o engine do SQLAlchemy
-engine = create_engine(DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
+# check_same_thread é apenas para SQLite
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
+else:
+    engine = create_engine(DATABASE_URL, echo=True)
 
 # Cria uma sessão local
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
