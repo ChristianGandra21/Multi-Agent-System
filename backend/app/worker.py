@@ -1,6 +1,6 @@
 import os
 from app.celery_app import celery_app
-from app.agents.graph import run_research
+from app.agents.graph import run_graph
 from app.database import SessionLocal
 from app.models import Research
 
@@ -13,7 +13,7 @@ def execute_research_flow(research_id: int, query: str):
         research.status = "in_progress"
         db.commit()
 
-        result = run_research(query)
+        result = run_graph(query)
 
         if result["success"]:
             research.status = "completed"
