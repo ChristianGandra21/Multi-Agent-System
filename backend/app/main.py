@@ -5,6 +5,7 @@ from typing import List
 from .database import get_db, engine, Base
 from .models import Research
 from .schemas import ResearchCreate, ResearchResponse
+from .worker import execute_research_flow
 
 app = FastAPI(
     title="Multi-Agent Research System",
@@ -24,10 +25,13 @@ def root():
 # Rota para criar uma nova tarefa de pesquisa
 @app.post("/research/", response_model=ResearchResponse)
 def create_research(research: ResearchCreate, db: Session = Depends(get_db)):
-    new_research = Research(query=research.query)
+    new_research = Research(query=research.query, status="pending")
     db.add(new_research)
     db.commit()
     db.refresh(new_research)
+
+    execute_research_flow.delay(new_research.id, new_research.query)
+    
     return new_research
 
 # Rota para obter tarefas por id

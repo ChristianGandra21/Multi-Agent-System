@@ -29,7 +29,7 @@ def create_graph():
 
     return app
 
-def run_research(query: str) -> dict:
+def run_graph(query: str) -> dict:
     graph = create_graph()
     initial_state: ResearchState = {
         "query": query,

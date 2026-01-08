@@ -7,7 +7,7 @@ from app.agents.llm_config import get_llm
 import os
 
 def writer_node(state: ResearchState) -> ResearchState:
-    research_summary = state.get("research_summary")
+    summary = state.get("research_summary")
     analysis = state.get("data_analysis")
 
     llm = get_llm()

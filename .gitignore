@@ -1,2 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Environment Variables (Segurança!)
 .env
-pycache/
+
+# Docker / Database
+postgres_data/
+research.db
+
+# IDEs
+.vscode/
+.idea/
