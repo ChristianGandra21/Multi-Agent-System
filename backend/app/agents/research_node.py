@@ -5,6 +5,7 @@ import json
 from tavily import TavilyClient
 
 from app.agents.state import ResearchState
+from app.agents.llm_config import get_llm
 
 def web_search(query: str) -> str:
     try:
@@ -26,20 +27,12 @@ def web_search(query: str) -> str:
         return json.dumps({
             "error": str(e)
         })
-    
-def get_llm():
-    llm = ChatGroq(
-        api_key=os.getenv("GROQ_API_KEY"),
-        model="llama-3.3-70b-versatile",
-        temperature=0.1
-    )
-    return llm.bind_tools([web_search])
 
 def research_node(state: ResearchState) -> ResearchState:
     query  = state["query"]
 
     try:
-        llm = get_llm()
+        llm = get_llm(tools=[web_search])
 
         results = web_search(query)
 

@@ -8,9 +8,17 @@ def create_graph():
     workflow = StateGraph(ResearchState)
 
     workflow.add_node("research_node", research_node)
+    workflow.add_node("data_node", data_node)
+    workflow.add_node("code_node", code_node)
+    workflow.add_node("writer_node", writer_node)
+
 
     workflow.set_entry_point("research_node")
-    workflow.add_edge("research_node", END)
+
+    workflow.add_edge("research_node", "data_node")
+    workflow.add_edge("data_node", "code_node")
+    workflow.add_edge("code_node", "writer_node")
+    workflow.add_edge("writer_node", END)
 
     app = workflow.compile()
 
