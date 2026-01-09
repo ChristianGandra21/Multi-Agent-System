@@ -1,0 +1,39 @@
+import os
+from datetime import datetime
+from app.celery_app import celery_app
+from app.agents.graph import run_graph
+from app.database import SessionLocal
+from app.models import Research
+
+@celery_app.task(name="execute_research_flow")
+def execute_research_flow(research_id: int, query: str):
+    db = SessionLocal()
+    
+    try:
+        research = db.query(Research).filter(Research.id == research_id).first()
+        research.status = "in_progress"
+        db.commit()
+
+        result = run_graph(query)
+
+        if result["success"]:
+            research.status = "completed"
+            research.research_data = result.get("research_results")
+            research.analysis_data = result.get("extracted_data")
+            research.code_outputs = result.get("code_outputs")
+            research.final_report = result.get("final_report")
+            research.completed_at = datetime.utcnow()
+        else:
+            research.status = "failed"
+            research.error_message = str(result.get("error"))
+
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        research = db.query(Research).filter(Research.id == research_id).first()
+        if research:
+            research.status = "failed"
+            research.error_message = str(e)
+            db.commit()
+    finally:
+        db.close()
